@@ -1,4 +1,8 @@
 import { Router } from 'express';
+import { TransactionsRoutes } from './transactions/routes';
+import { BudgetRoutes } from './budget/routes';
+import { PotsController } from './pots/controller';
+import { PotRoutes } from './pots/routes';
 
 
 
@@ -10,11 +14,10 @@ export class AppRoutes {
 
     const router = Router();
     
-    // Definir las rutas
-    // router.use('/api/todos', /*TodoRoutes.routes */ );
-
-
-
+    router.use('/api/transactions',TransactionsRoutes.routes);
+    router.use('/api/budget',BudgetRoutes.routes);
+    router.use('/api/pots',PotRoutes.routes);
+    
     return router;
   }
 
