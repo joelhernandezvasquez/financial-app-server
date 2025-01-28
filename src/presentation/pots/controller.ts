@@ -1,24 +1,23 @@
 import { Request, Response } from "express";
-
+import { PotService } from "../services/pots.service";
+import { CustomError } from "../../domain/errors/custom.error";
 
 export class PotsController {
     
-    //constructor(private readonly categoryService:CategoryService){}
+    constructor(private readonly potsService:PotService){}
 
-    // private handleError = (error:unknown,res:Response) =>{
-    //    if(error instanceof CustomError){
-    //      return res.status(error.statusCode).json({error:error.message})
-    //    }
-    //    console.log(`${error}`);
-    //    return res.status(500).json({error:'Internal Server Error'});
-    // }
+    private handleError = (error:unknown,res:Response) =>{
+       if(error instanceof CustomError){
+         return res.status(error.statusCode).json({error:error.message})
+       }
+       console.log(`${error}`);
+       return res.status(500).json({error:'Internal Server Error'});
+    }
 
     getPots = async(req:Request,res:Response) => {
-       return res.status(200).json('Get Pots');
-    
-        // this.categoryService.getCategories(paginationDTO!)
-        // .then(categories => res.json(categories))
-        // .catch(error => this.handleError(error,res))
+        this.potsService.getPots()
+        .then(pots => res.json(pots))
+        .catch(error => this.handleError(error,res))
       }
 
     createPot = async(req:Request,res:Response) =>{

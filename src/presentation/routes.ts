@@ -5,9 +5,6 @@ import { PotsController } from './pots/controller';
 import { PotRoutes } from './pots/routes';
 import { BalanceRoutes } from './balance/routes';
 
-
-
-
 export class AppRoutes {
 
 
