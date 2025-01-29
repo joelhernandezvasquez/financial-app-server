@@ -1,10 +1,11 @@
 import { prisma } from "../postgres";
-import {budgets,pots} from './data';
+import {budgets,pots, transactions} from './data';
 
 async function main(){
 
     await prisma.budget.deleteMany();
     await prisma.pots.deleteMany();
+    await prisma.transaction.deleteMany();
        
     await prisma.budget.createMany({
         data:budgets
@@ -12,6 +13,10 @@ async function main(){
 
     await prisma.pots.createMany({
         data:pots
+    })
+
+    await prisma.transaction.createMany({
+        data:transactions
     })
 
 
