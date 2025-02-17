@@ -399,7 +399,24 @@
             "date": "2024-07-02T19:50:05Z",
             "amount": -16.50,
             "recurring": false
-        }
+        },
+        {
+            "avatar": "./assets/images/avatars/swift-ride-share.jpg",
+            "name": "Swift Ride Share",
+            "category": "Bills",
+            "date": "2024-08-10T19:50:05Z",
+            "amount": -36.50,
+            "recurring": false
+        },
+        {
+            "avatar": "./assets/images/avatars/swift-ride-share.jpg",
+            "name": "Swift Ride Share",
+            "category": "Bills",
+            "date": "2024-08-20T19:50:05Z",
+            "amount": -26.50,
+            "recurring": false
+        },
+
     ]
 
     export const budgets =  [

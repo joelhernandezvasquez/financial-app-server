@@ -13,6 +13,7 @@ export class TransactionsRoutes {
     const controller = new TransactionController(transactionService);
   
      router.get('/',controller.getTransactions);
+     router.get('/summary',controller.getTransactionSummary )
      router.get('/:id',controller.getTransaction);
 
     return router;
