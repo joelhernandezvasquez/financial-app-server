@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { TransactionService } from "../services/transaction.service";
 import { CustomError } from "../../domain/errors/custom.error";
 
-
 export class TransactionController {
     
     constructor(private readonly transactionService:TransactionService){}
@@ -16,7 +15,6 @@ export class TransactionController {
     }
 
     getTransactions = async(req:Request,res:Response) => {
-
        this.transactionService.getTransanctions()
        .then(transactions => res.json(transactions))
        .catch(error => this.handleError(error,res))
@@ -28,5 +26,13 @@ export class TransactionController {
          // this.categoryService.getCategories(paginationDTO!)
          // .then(categories => res.json(categories))
          // .catch(error => this.handleError(error,res))
+       }
+
+       getTransactionSummary = async(req:Request,res:Response) =>{
+
+       this.transactionService.getTransactionSummary()
+       .then(transactions => res.json(transactions))
+       .catch(error => this.handleError(error,res))
+
        }
 }
