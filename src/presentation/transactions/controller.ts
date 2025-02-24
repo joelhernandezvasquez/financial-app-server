@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { TransactionService } from "../services/transaction.service";
 import { CustomError } from "../../domain/errors/custom.error";
+import { transactions } from "../../data/seed/data";
 
 export class TransactionController {
     
@@ -34,5 +35,11 @@ export class TransactionController {
        .then(transactions => res.json(transactions))
        .catch(error => this.handleError(error,res))
 
+       }
+
+       getTransactionCategories = async(req:Request,res:Response) =>{
+        this.transactionService.getTransactionCategories()
+        .then(transactions => res.json(transactions))
+        .catch(error => this.handleError(error,res))
        }
 }

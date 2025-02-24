@@ -56,16 +56,19 @@ export class TransactionService{
 
             return[
                 {
+                    id:1001,
                     category:'Paid Bills',
                     amount:this.getTransactionAmount(paidBills),
                     theme:'#277C78'
                 },
                 {
+                    id:2002,
                     category:'Total Upcoming',
                     amount:this.getTransactionAmount(upcomingBills),
                     theme:'#F2CDAC'
                 },
                 {
+                    id:3003,
                     category:'Due Soon',
                     amount:this.getTransactionAmount(dueSoonBills),
                     theme:'#82C9D7'
@@ -75,5 +78,19 @@ export class TransactionService{
         catch(error){
             throw CustomError.internalServerError('Internal Server Error');
         }
+    }
+
+    getTransactionCategories = async () =>{
+      try{
+        const categories = await prisma.transaction.findMany({
+            distinct: ['category'],
+            select: { category: true },
+          });
+
+          return categories;
+      }
+      catch(error){
+        throw CustomError.internalServerError('Internal Server Error');
+      }
     }
 }
