@@ -42,4 +42,11 @@ export class TransactionController {
         .then(transactions => res.json(transactions))
         .catch(error => this.handleError(error,res))
        }
+
+       getFilterTransactions= async(req:Request,res:Response) =>{
+        const {query} = req.query; 
+        this.transactionService.getFilterTransanctions(query as string)
+        .then(transactions => res.json(transactions))
+        .catch(error => this.handleError(error,res))
+       }
 }

@@ -93,4 +93,24 @@ export class TransactionService{
         throw CustomError.internalServerError('Internal Server Error');
       }
     }
+
+    getFilterTransanctions = async (sender:string) => {
+        try{
+            const transactions = await prisma.transaction.findMany({
+                where: {
+                  name: {
+                    contains: sender,
+                    mode: "insensitive",
+                  },
+                },
+              });
+            return transactions;
+            
+        }
+        catch(error){
+            throw CustomError.internalServerError('Internal Server Error');
+        } 
+    }
+
+
 }
