@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "../../data/postgres"
 import { CustomError } from "../../domain/errors/custom.error";
+import { Prisma } from "@prisma/client";
 
 interface SummaryTransaction{
     id: number;
@@ -11,12 +12,40 @@ interface SummaryTransaction{
     amount: number;
     recurring: boolean;
 }
+
+enum SortTransactionValues{
+    Latest = 'Latest',
+    Oldest = 'Oldest',
+    Highest = 'Highest',
+    Lowest = 'Lowest',
+    AZ="AZ",
+    ZA="ZA"
+}
 export class TransactionService{
 
     constructor(){}
-
+    
     private getTransactionAmount = (amount:SummaryTransaction[]) =>{
        return amount.reduce((accumulator, currentValue) => accumulator + Math.abs(currentValue.amount), 0);
+    }
+
+    private getSortTransactionQuery = (sortBy:string) => {
+        if (!sortBy) return undefined;
+
+        const sortMapping: Record<string, Record<string, Prisma.SortOrder>> = {
+            [SortTransactionValues.Latest]: { date: Prisma.SortOrder.desc },
+            [SortTransactionValues.Oldest]: { date: Prisma.SortOrder.asc },
+            [SortTransactionValues.Highest]: { amount: Prisma.SortOrder.desc },
+            [SortTransactionValues.Lowest]: { amount: Prisma.SortOrder.asc },
+            [SortTransactionValues.AZ]: { name: Prisma.SortOrder.asc },
+            [SortTransactionValues.ZA]: { name: Prisma.SortOrder.desc }
+        };
+    
+        const normalizedSortBy = sortBy === 'A to Z' ? SortTransactionValues.AZ : 
+                                 sortBy === 'Z to A' ? SortTransactionValues.ZA : 
+                                 sortBy;
+    
+        return sortMapping[normalizedSortBy] || undefined;
     }
 
     getTransanctions = async () => {
@@ -94,18 +123,30 @@ export class TransactionService{
       }
     }
 
-    getFilterTransanctions = async (sender:string) => {
+    getFilterTransanctions = async (query:string,sortBy:string) => {
         try{
+            const filterConditions:any[] = [
+                { name: { contains:query , mode: "insensitive" } },
+                { category: { contains: query, mode: "insensitive" } },
+            ]
+            
+            const searchAmount = parseInt(query);
+           
+            if(!isNaN(searchAmount)){
+               filterConditions.push({
+                amount:searchAmount
+               })
+            }
+
+            const orderByCondition = this.getSortTransactionQuery(sortBy);
+
             const transactions = await prisma.transaction.findMany({
                 where: {
-                  name: {
-                    contains: sender,
-                    mode: "insensitive",
-                  },
+                    OR: filterConditions
                 },
+                orderBy:orderByCondition
               });
-            return transactions;
-            
+            return transactions;  
         }
         catch(error){
             throw CustomError.internalServerError('Internal Server Error');
