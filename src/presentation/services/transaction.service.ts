@@ -1,4 +1,4 @@
-import { Response } from "express";
+
 import { prisma } from "../../data/postgres"
 import { CustomError } from "../../domain/errors/custom.error";
 import { Prisma } from "@prisma/client";
@@ -116,6 +116,7 @@ export class TransactionService{
             select: { category: true },
           });
 
+          categories.unshift({category: "All Transactions"});
           return categories;
       }
       catch(error){
@@ -142,7 +143,7 @@ export class TransactionService{
 
             const transactions = await prisma.transaction.findMany({
                 where: {
-                    OR: filterConditions
+                    OR: query!=='All Transactions' ? filterConditions : undefined
                 },
                 orderBy:orderByCondition
               });
