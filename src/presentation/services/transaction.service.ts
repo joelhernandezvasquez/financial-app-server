@@ -124,8 +124,12 @@ export class TransactionService{
       }
     }
 
-    getFilterTransanctions = async (query:string,sortBy:string) => {
+    getFilterTransanctions = async (query:string,page:number,sortBy:string) => {
+        
         try{
+            const ITEMS_PER_PAGE = 10; 
+            const skip = (page - 1) * ITEMS_PER_PAGE;
+
             const filterConditions:any[] = [
                 { name: { contains:query , mode: "insensitive" } },
                 { category: { contains: query, mode: "insensitive" } },
@@ -145,8 +149,11 @@ export class TransactionService{
                 where: {
                     OR: query!=='All Transactions' ? filterConditions : undefined
                 },
-                orderBy:orderByCondition
+                orderBy:orderByCondition,
+                take:ITEMS_PER_PAGE,
+                skip:skip
               });
+              console.log(transactions.length)
             return transactions;  
         }
         catch(error){

@@ -44,9 +44,9 @@ export class TransactionController {
        }
 
        getFilterTransactions= async(req:Request,res:Response) =>{
-        const {query,sortBy} = req.query; 
+        const {query,page,sortBy} = req.query; 
         //TODO:need to refactor how I am passing the params maybe an object is more ideal
-        this.transactionService.getFilterTransanctions(query as string,sortBy as string)
+        this.transactionService.getFilterTransanctions(query as string,+page!,sortBy as string)
         .then(transactions => res.json(transactions))
         .catch(error => this.handleError(error,res))
        }
