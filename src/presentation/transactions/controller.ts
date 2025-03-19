@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { TransactionService } from "../services/transaction.service";
 import { CustomError } from "../../domain/errors/custom.error";
-import { transactions } from "../../data/seed/data";
 
 export class TransactionController {
     
@@ -44,9 +43,23 @@ export class TransactionController {
        }
 
        getFilterTransactions= async(req:Request,res:Response) =>{
-        const {query,sortBy} = req.query; 
-        //TODO:need to refactor how I am passing the params maybe an object is more ideal
-        this.transactionService.getFilterTransanctions(query as string,sortBy as string)
+        const {query,page,sortBy} = req.query; 
+        
+         const transactionQueryParams = {
+          query:query as string,
+          page:+page! as number,
+          sortBy:sortBy as string
+         }
+
+        this.transactionService.getFilterTransanctions(transactionQueryParams)
+        .then(transactions => res.json(transactions))
+        .catch(error => this.handleError(error,res))
+       }
+
+       fetchTransactionPages= async(req:Request,res:Response) =>{
+        const {query} = req.query; 
+  
+        this.transactionService.fetchTransactionPages(query as string)
         .then(transactions => res.json(transactions))
         .catch(error => this.handleError(error,res))
        }
