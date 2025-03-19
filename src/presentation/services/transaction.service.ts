@@ -2,6 +2,7 @@
 import { prisma } from "../../data/postgres"
 import { CustomError } from "../../domain/errors/custom.error";
 import { Prisma } from "@prisma/client";
+import {TransactionQueryParams} from '../types/index';
 
 interface SummaryTransaction{
     id: number;
@@ -46,6 +47,22 @@ export class TransactionService{
                                  sortBy;
     
         return sortMapping[normalizedSortBy] || undefined;
+    }
+
+    private getFilterTransactionCondition = (query:string) =>{
+        const filterConditions:any[] = [
+            { name: { contains:query , mode: "insensitive" } },
+            { category: { contains: query, mode: "insensitive" } },
+        ]
+        
+        const searchAmount = parseInt(query);
+       
+        if(!isNaN(searchAmount)){
+           filterConditions.push({
+            amount:searchAmount
+           })
+        }
+        return filterConditions;
     }
 
     getTransanctions = async () => {
@@ -124,25 +141,14 @@ export class TransactionService{
       }
     }
 
-    getFilterTransanctions = async (query:string,page:number,sortBy:string) => {
-        
+       getFilterTransanctions = async (transactionQueryParams:TransactionQueryParams) => {
+         const {query,page,sortBy} = transactionQueryParams;
         try{
             const ITEMS_PER_PAGE = 10; 
             const skip = (page - 1) * ITEMS_PER_PAGE;
 
-            const filterConditions:any[] = [
-                { name: { contains:query , mode: "insensitive" } },
-                { category: { contains: query, mode: "insensitive" } },
-            ]
+            const filterConditions = this.getFilterTransactionCondition(query);
             
-            const searchAmount = parseInt(query);
-           
-            if(!isNaN(searchAmount)){
-               filterConditions.push({
-                amount:searchAmount
-               })
-            }
-
             const orderByCondition = this.getSortTransactionQuery(sortBy);
 
             const transactions = await prisma.transaction.findMany({
@@ -153,8 +159,23 @@ export class TransactionService{
                 take:ITEMS_PER_PAGE,
                 skip:skip
               });
-              console.log(transactions.length)
             return transactions;  
+        }
+        catch(error){
+            throw CustomError.internalServerError('Internal Server Error');
+        } 
+    }
+
+    fetchTransactionPages = async(query:string) => {
+        try{
+            const filterConditions = this.getFilterTransactionCondition(query);
+            const transactions = await prisma.transaction.count({
+                where: {
+                    OR: query!=='All Transactions' ? filterConditions : undefined
+                },
+               
+              });
+              return transactions;
         }
         catch(error){
             throw CustomError.internalServerError('Internal Server Error');
