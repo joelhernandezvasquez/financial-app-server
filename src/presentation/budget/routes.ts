@@ -13,6 +13,7 @@ export class BudgetRoutes {
     const controller = new BudgetController(categoryService);
   
      router.get('/',controller.getBudgets);
+     router.get('/summary',controller.getSpendingSummary)
      router.post('/',controller.createBudget);
      router.put('/:id',controller.updateBudget);
      router.delete('/:id',controller.deleteBudget);
