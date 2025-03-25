@@ -20,6 +20,12 @@ export class BudgetController {
         .catch(error => this.handleError(error,res))
       }
 
+      getSpendingSummary = async(req:Request,res:Response) => {
+        this.budgetService.getSpendingSummary()
+        .then(budgets => res.json(budgets))
+        .catch(error => this.handleError(error,res))
+      }
+
     createBudget = async(req:Request,res:Response) =>{
       return res.status(201).json('Create Budget');
     }
